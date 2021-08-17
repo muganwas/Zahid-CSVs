@@ -1,0 +1,10 @@
+{
+    "editor.tabSize": 2,
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "typescript.format.semicolons": "insert",
+    "javascript.format.semicolons": "insert",
+    "editor.inlineSuggest.enabled": true,
+    "prettier.jsxSingleQuote": true,
+    "prettier.singleQuote": true
+}
