@@ -1,0 +1,13 @@
+h5 {
+	font-size: 14px;
+	color: #777777;
+}
+
+#logo {
+	display: inline-block;
+}
+
+#title {
+	display: block;
+	text-align: center;
+}
