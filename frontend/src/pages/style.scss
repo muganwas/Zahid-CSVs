@@ -1,0 +1,35 @@
+.home-container {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	padding: 100px 20px;
+	.top-sect {
+		display: flex;
+		flex-direction: column;
+		border-bottom: thin solid #000;
+		#title {
+			#title-text {
+				font-size: 34px;
+			}
+		}
+		.button-container {
+			padding: 20px 0;
+			button {
+				width: 150px;
+				padding: 10px 20px;
+				text-align: left;
+				font-size: 20px;
+				background-color: #000;
+				color: #fff;
+				border: none;
+				cursor: pointer;
+				&:hover {
+					box-shadow: 1px 2px 1px 1px rgb(99, 99, 99);
+				}
+			}
+		}
+	}
+	.bottom-sect {
+		display: flex;
+	}
+}
