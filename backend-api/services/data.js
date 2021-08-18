@@ -21,8 +21,8 @@ async function saveCSV(info) {
     let queryString = 'INSERT INTO ' + info.table_name + ' (' + newEntryNamesString + ') VALUES (' + valuesString + ') RETURNING *';
     let message = 'Error in creating ' + info.table_name;
     const result = await db.query(`${queryString}`, newEntryValues);
-    if (typeof result === 'object') {
-      message = info.table_name + ' created successfully';
+    if (result.length > 0) {
+      message = 'CSV successfully saved.';
     }
     return { message, result };
   });
@@ -34,19 +34,19 @@ async function retrieveData(info) {
 async function createTable(info) {
   validateTableCreate(info);
   let queryString = 'CREATE TABLE ' + info.table_name + ' (id serial PRIMARY KEY,';
-  await info.table_rows.map(row => {
-    if (row.type === 'timestamp') {
-      const rowString = row.name + ' TIMESTAMP NOT NULL,';
-      queryString = queryString + rowString;
-    } else {
-      const rowString = row.name + ' VARCHAR(255) NOT NULL,';
-      queryString = queryString + rowString;
-    }
+  const table_rowsLength = info.table_rows.length;
+  await info.table_rows.map((row, i) => {
+    const end = table_rowsLength - 1 === i;
+    let rowString = '';
+    if (row.type === 'timestamp')
+      rowString = row.name + ' TIMESTAMP NOT NULL';
+    else
+      rowString = row.name + ' VARCHAR(255) NOT NULL';
+    if (!end) rowString = rowString + ','; // add comma only if the array hasn't come to an end
+    queryString = queryString + rowString;
   });
-  const lastStringArr = queryString.split('');
-  lastStringArr.pop();
-  const newQueryString = lastStringArr.join('');
-  queryString = newQueryString + ')';
+
+  queryString = queryString + ')';
   let message = 'Error in creating ' + info.table_name;
   const result = await db.query(`${queryString}`);
   if (typeof result === 'object') {

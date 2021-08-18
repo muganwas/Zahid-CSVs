@@ -63,6 +63,7 @@ export default function Home() {
     const trimRows = [];
     const rowObjectArr = [];
     const rowValObjectArr = [];
+
     await titleArr.forEach(e => trimRows.push(((e.replace(/['"]+/g, '')).trim()).replace(/\s/g, '_'))); //remove whitespace, queotes then replace spaces with a "_"
     await trimRows.forEach(e => rowObjectArr.push({ name: e, type: 'string' }));
     await valRows.map(async r => {
@@ -76,6 +77,7 @@ export default function Home() {
           axios.post(instertURI, { "table_name": name, "table_rows": rowValObjectArr }).then(res => {
             if (res.status === 200) {
               updateLoading(false);
+              updateError('');
               _onClose();
             }
           }).catch(e => {
