@@ -1,6 +1,8 @@
 require('dotenv').config();
 const path = require('path');
 const express = require('express');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -21,6 +23,8 @@ const corsOptionsDelegate = function (req, callback) {
     callback(null, corsOptions);
 };
 
+app.use(logger('dev'));
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

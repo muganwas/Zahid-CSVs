@@ -14,7 +14,8 @@ export default function CSVAddModal({ csvs, rawFile, showModal, _onDone, _onClos
   }, [rawFile]);
   useEffect(() => {
     if (csvs) {
-      const prev = csvs.splice(0, 4);
+      const newCsvs = [...csvs];
+      const prev = newCsvs.splice(0, 4);
       updatePreviews(prev);
     }
   }, [csvs]);
@@ -35,7 +36,7 @@ export default function CSVAddModal({ csvs, rawFile, showModal, _onDone, _onClos
                 <button
                   onClick={(e) => {
                     e.preventDefault();
-                    _onDone && _onDone();
+                    _onDone && _onDone(fileName, csvs[0]);
                   }}
                 >
                   Upload
