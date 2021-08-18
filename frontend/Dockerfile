@@ -1,10 +1,9 @@
-FROM node:15.3-alpine
+FROM node:14-alpine
+RUN apk update && apk add yarn python g++ make && rm -rf /var/cache/apk/*
 RUN mkdir /app
 WORKDIR /app
-COPY ["package.json", "yarn.lock*", "./"]
-RUN yarn install
-
 COPY . .
+RUN yarn install
 
 LABEL maintainer="Muganwas <stevenmuganwa@gmail.com>" version='1.0'
 CMD yarn start

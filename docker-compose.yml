@@ -17,7 +17,8 @@ services:
     env_file: ['./frontend/.env']
     ports: ['3000:3000']
     volumes:
-      - ./frontend:/app
+      - /frontend/node_modules
+      - ./frontend/src:/frontend_app/src
     networks:
       - front-tier
       - back-tier
