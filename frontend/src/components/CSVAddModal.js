@@ -14,7 +14,7 @@ export default function CSVAddModal({ csvs, rawFile, showModal, _onDone, _onClos
   }, [rawFile]);
   useEffect(() => {
     if (csvs) {
-      const prev = csvs.splice(0, 3);
+      const prev = csvs.splice(0, 4);
       updatePreviews(prev);
     }
   }, [csvs]);
