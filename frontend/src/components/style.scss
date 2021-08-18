@@ -1,0 +1,81 @@
+.modal {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 1rem 5rem;
+	background-color: rgba(0, 0, 0, 0.8);
+	.csv-details-container {
+		display: flex;
+		width: 100%;
+		padding: 5rem;
+		background-color: #4472c4;
+		.top-sect {
+			display: flex;
+			width: 100%;
+			flex-direction: column;
+			#title-text {
+				font-size: 34px;
+			}
+			.file-info {
+				display: flex;
+				flex-direction: column;
+				padding: 2rem 0;
+				#file-name,
+				#file-description {
+					flex: 1;
+					margin: 5px 0;
+					display: flex;
+					padding: 1rem 0.5rem;
+					font-size: 20px;
+					font-weight: bold;
+					border: thin solid #fff;
+					border-bottom-width: 3px;
+					color: #fff;
+				}
+				.upload-container {
+					padding: 1rem 0;
+					button {
+						width: 150px;
+						padding: 10px 20px;
+						text-align: left;
+						font-size: 20px;
+						background-color: #000;
+						color: #fff;
+						border: none;
+						cursor: pointer;
+						&:hover {
+							box-shadow: 1px 2px 1px 1px rgb(99, 99, 99);
+						}
+					}
+				}
+				.summary-container {
+					display: flex;
+					flex-direction: column;
+					border: thin solid #fff;
+					.cols {
+						display: flex;
+						flex-direction: row;
+						justify-content: flex-start;
+						border-bottom: 1px solid #fff;
+						span {
+							flex: 1;
+							border-left: 1px solid #fff;
+							overflow-y: scroll;
+							padding: 5px 10px;
+							text-align: left;
+						}
+						:first-child {
+							border-left: none;
+						}
+						&:nth-of-type(odd) {
+							background-color: #e9ebf5;
+						}
+						&:nth-of-type(even) {
+							background-color: #cfd5ea;
+						}
+					}
+				}
+			}
+		}
+	}
+}
