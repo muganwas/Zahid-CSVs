@@ -1,4 +1,6 @@
 'use strict';
+const data = require('../services/data');
+
 module.exports = {
     save: async (req, res, next) => {
         try {
@@ -14,7 +16,16 @@ module.exports = {
             next(err.message);
         }
     },
-    retrieve: async (req, res) => {
-
+    createTable: async (req, res, next) => {
+        try {
+            res.json(await data.createTable(req.body));
+        } catch (err) {
+            if (err.message.includes('already exists')) {
+                res.send(err.message);
+            }
+            else {
+                next(err.message);
+            }
+        }
     }
 };

@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import csv from 'csv';
 import { CSVAddModal } from '../components';
 import './style.scss';
+
+const baseURL = process.env.REACT_APP_BACKEND_API;
 
 export default function Home() {
   const [csvs, updateCsvs] = useState([]);
@@ -106,7 +109,7 @@ export default function Home() {
             <span id='title-text'>Insect-CSV lists</span>
           </div>
           <div className='button-container'>
-            <input onChange={_onInputChange} id='file-input' multiple={false} type='file' style={{ display: 'none' }} />
+            <input onChange={_onInputChange} id='file-input' value={val} multiple={false} type='file' style={{ display: 'none' }} />
             <button
               onClick={(e) => {
                 e.preventDefault();
