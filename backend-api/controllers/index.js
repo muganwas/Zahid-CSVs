@@ -6,15 +6,13 @@ module.exports = {
         try {
             res.json(await data.saveCSV(req.body));
         } catch (err) {
-            console.error(`Error while posting quotes `, err.message);
-            next(err);
+            next(err.message);
         }
     },
     retrieve: async (req, res, next) => {
         try {
             res.json(await data.getMultiple(req.query.page));
         } catch (err) {
-            console.error(`Error while getting quotes `, err.message);
             next(err);
         }
     },
@@ -22,7 +20,6 @@ module.exports = {
         try {
             res.json(await data.getByAuthor(req.query.author));
         } catch (err) {
-            console.error(`Error while getting quotes `, err.message);
             next(err);
         }
     },
@@ -30,8 +27,12 @@ module.exports = {
         try {
             res.json(await data.createTable(req.body));
         } catch (err) {
-            console.error(`Error while getting quotes `, err.message);
-            next(err);
+            if (err.message.includes('already exists')) {
+                res.send(err.message);
+            }
+            else {
+                next(err.message);
+            }
         }
     }
 };

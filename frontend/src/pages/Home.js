@@ -51,18 +51,34 @@ export default function Home() {
 
   const _onDone = async (name, rows) => {
     const createTableURI = baseURL + 'create-table';
+    const instertURI = baseURL + 'saveCSV';
+    const newRows = [...rows];
+    const titleArr = [...rows[0]];
+    const valRows = newRows.splice(1, rows.length);
     const trimRows = [];
     const rowObjectArr = [];
-    rows.forEach(e => trimRows.push((e.trim()).replace(/\s/g, '_')));
-    trimRows.forEach(e => rowObjectArr.push({ name: e, type: 'string' }));
-    console.log('uri ', createTableURI);
+    const rowValObjectArr = [];
+    await titleArr.forEach(e => trimRows.push(((e.replace(/['"]+/g, '')).trim()).replace(/\s/g, '_'))); //remove whitespace, queotes then replace spaces with a "_"
+    await trimRows.forEach(e => rowObjectArr.push({ name: e, type: 'string' }));
+    await valRows.map(async r => {
+      const currentRow = [];
+      await r.map((v, i) => currentRow.push({ name: rowObjectArr[i].name, value: (v.replace(/['"]+/g, '')).trim() }));
+      rowValObjectArr.push(currentRow);
+    });
     if (name) {
-      axios.post(createTableURI, { "table_name": name, "table_rows": rowObjectArr }).then(res => {
-        console.log('result', res);
+      axios.post(createTableURI, { "table_name": name, "table_rows": rowObjectArr }).then((res) => {
+        if (res.status === 200) {
+          axios.post(instertURI, { "table_name": name, "table_rows": rowValObjectArr }).then(res => {
+            if (res.status === 200) {
+
+            }
+          }).catch(e => {
+            console.log('insert err ', e);
+          });
+        }
       }).catch(e => {
         console.log('err ', e);
       });
-      // console.log('api', process.env.REACT_APP_BACKEND_API);
     }
   };
   return (

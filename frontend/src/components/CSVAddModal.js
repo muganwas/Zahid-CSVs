@@ -36,7 +36,7 @@ export default function CSVAddModal({ csvs, rawFile, showModal, _onDone, _onClos
                 <button
                   onClick={(e) => {
                     e.preventDefault();
-                    _onDone && _onDone(fileName, csvs[0]);
+                    _onDone && _onDone(fileName, csvs);
                   }}
                 >
                   Upload
@@ -49,7 +49,7 @@ export default function CSVAddModal({ csvs, rawFile, showModal, _onDone, _onClos
                       {csv?.map((row, i) => {
                         return (
                           <span key={i}>
-                            {row}
+                            {row.replace(/['"]+/g, '')}
                           </span>
                         );
                       })}

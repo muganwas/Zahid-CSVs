@@ -1,7 +1,7 @@
 const db = require('./db');
 const helper = require('../helper');
 const config = require('../config');
-const { validateTableCreate } = require('../services/validation');
+const { validateTableCreate, validateInsertCSV } = require('../services/validation');
 
 async function getMultiple(page = 1) {
   const offset = helper.getOffset(page, config.listPerPage);
@@ -37,18 +37,28 @@ async function getByAuthor(author) {
   };
 }
 
-async function saveCSV(quote) {
-  const result = await db.query(
-    'INSERT INTO quote(quote, author) VALUES ($1, $2) RETURNING *',
-    [quote.quote, quote.author]
-  );
-  let message = 'Error in creating quote';
+async function saveCSV(info) {
+  validateInsertCSV(info);
 
-  if (result.length) {
-    message = 'Quote created successfully';
-  }
-
-  return { message, result };
+  info.table_rows.forEach(async (mainRow) => {
+    const newEntryNames = [];
+    const newEntryValues = [];
+    let newEntryNamesString = '';
+    let valuesStringArr = [];
+    let valuesString = '';
+    await mainRow.forEach(r => newEntryNames.push(r.name));
+    await mainRow.forEach((r, i) => valuesStringArr.push('$' + (i + 1)));
+    await mainRow.forEach(r => newEntryValues.push(r.value));
+    valuesString = valuesStringArr.join(',');
+    newEntryNamesString = newEntryNames.join(',');
+    let queryString = 'INSERT INTO ' + info.table_name + ' (' + newEntryNamesString + ') VALUES (' + valuesString + ') RETURNING *';
+    let message = 'Error in creating ' + info.table_name;
+    const result = await db.query(`${queryString}`, newEntryValues);
+    if (typeof result === 'object') {
+      message = info.table_name + ' created successfully';
+    }
+    return { message, result };
+  });
 }
 
 async function createTable(info) {
@@ -68,10 +78,9 @@ async function createTable(info) {
   const newQueryString = lastStringArr.join('');
   queryString = newQueryString + ')';
   let message = 'Error in creating ' + info.table_name;
-  console.log(queryString);
   const result = await db.query(`${queryString}`);
-  if (result.length) {
-    message = 'Quote created successfully';
+  if (typeof result === 'object') {
+    message = info.table_name + ' created successfully';
   }
   return { message, result };
 }
