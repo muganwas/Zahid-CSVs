@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Modal } from '@material-ui/core';
 import './style.scss';
 
-export default function CSVAddModal({ csvs, rawFile, showModal, _onDone, _onClose }) {
+export default function CSVAddModal({ csvs, rawFile, showModal, error, loading, _onDone, _onClose }) {
   const [fileName, updateFileName] = useState('');
   const [previews, updatePreviews] = useState();
   useEffect(() => {
     if (rawFile) {
-      const rawFileArr = (rawFile.name).split('.');
+      const rawFileArr = rawFile && rawFile.name ? (rawFile.name).split('.') : [];
       rawFileArr.pop();
       updateFileName(rawFileArr.join(''));
     }
@@ -26,6 +26,7 @@ export default function CSVAddModal({ csvs, rawFile, showModal, _onDone, _onClos
     >
       <div className='csv-details-container'>
         <div className='top-sect'>
+          {error && <span id='error'>{error}</span>}
           <span id='title-text'>Insect CSV</span>
           {rawFile &&
             <div className='file-info'>
@@ -33,6 +34,7 @@ export default function CSVAddModal({ csvs, rawFile, showModal, _onDone, _onClos
               <span id='file-description'>Description: {fileName}</span>
               <div className='upload-container'>
                 <button
+                  disabled={loading}
                   onClick={(e) => {
                     e.preventDefault();
                     _onDone && _onDone();

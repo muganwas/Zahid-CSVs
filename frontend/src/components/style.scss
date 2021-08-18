@@ -13,6 +13,12 @@
 			display: flex;
 			width: 100%;
 			flex-direction: column;
+			#error {
+				color: red;
+				font-weight: 800;
+				padding: 5px;
+				justify-self: center;
+			}
 			#title-text {
 				font-size: 34px;
 			}

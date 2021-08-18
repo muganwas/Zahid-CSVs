@@ -6,7 +6,11 @@ import './style.scss';
 export default function Home() {
   const [csvs, updateCsvs] = useState([]);
   const [rawFile, updateRawFile] = useState();
+  const [rawFiles, updateRawFiles] = useState([]);
   const [showModal, updateShowModal] = useState(false);
+  const [loading, updateLoading] = useState(false);
+  const [err, updateError] = useState('');
+  const [val] = useState('');
 
   const _readFile = e => {
     const result = e.target.result;
@@ -24,18 +28,78 @@ export default function Home() {
 
   const _onInputChange = (e) => {
     e.preventDefault();
-    const files = e.target?.files; // if multiple enabled
+    const files = Array.from(e.target?.files); // if multiple enabled
     const file = files[0];
-    updateRawFile(file);
     if (file && file.type === 'text/csv') {
+      const newRawFiles = rawFiles ? [...Array.from(rawFiles)] : [];
+      updateRawFile(file);
+      updateRawFiles([...newRawFiles, file]);
       const reader = new FileReader();
       reader.addEventListener("load", _readFile);
       reader.readAsBinaryString(file);
     }
   };
+
+  const _onClose = () => {
+    updateShowModal(false);
+    updateRawFile(null);
+  };
+
+  // const toTimestamp = (date) => {
+  //   const dt = Date.parse(date);
+  //   return dt / 1000;
+  // };
+
+  const _onDone = async (name, rows) => {
+    updateLoading(true);
+    const createTableURI = baseURL + 'create-table';
+    const instertURI = baseURL + 'saveCSV';
+    const newRows = [...rows];
+    const titleArr = [...rows[0]];
+    const valRows = newRows.splice(1, rows.length);
+    const trimRows = [];
+    const rowObjectArr = [];
+    const rowValObjectArr = [];
+    await titleArr.forEach(e => trimRows.push(((e.replace(/['"]+/g, '')).trim()).replace(/\s/g, '_'))); //remove whitespace, queotes then replace spaces with a "_"
+    await trimRows.forEach(e => rowObjectArr.push({ name: e, type: 'string' }));
+    await valRows.map(async r => {
+      const currentRow = [];
+      await r.map((v, i) => currentRow.push({ name: rowObjectArr[i].name, value: (v.replace(/['"]+/g, '')).trim() }));
+      rowValObjectArr.push(currentRow);
+    });
+    if (name) {
+      axios.post(createTableURI, { "table_name": name, "table_rows": rowObjectArr }).then((res) => {
+        if (res.status === 200) {
+          axios.post(instertURI, { "table_name": name, "table_rows": rowValObjectArr }).then(res => {
+            if (res.status === 200) {
+              updateLoading(false);
+              _onClose();
+            }
+          }).catch(e => {
+            updateLoading(false);
+            updateError('Something went wrong, try again later');
+            console.log('insert err ', e);
+          });
+        }
+      }).catch(e => {
+        updateLoading(false);
+        updateError('Something went wrong, try again later');
+        console.log('err ', e);
+      });
+    }
+  };
   return (
     <>
-      {rawFile && <CSVAddModal csvs={csvs} rawFile={rawFile} _onDone={(v) => updateCsvs(v)} showModal={showModal} _onClose={() => updateShowModal(false)} />}
+      {rawFile &&
+        <CSVAddModal
+          csvs={csvs}
+          loading={loading}
+          error={err}
+          rawFile={rawFile}
+          _onDone={_onDone}
+          showModal={showModal}
+          _onClose={_onClose}
+        />}
       <div className='home-container'>
         <div className='top-sect'>
           <div id='title'>
@@ -54,11 +118,31 @@ export default function Home() {
             </button>
           </div>
         </div>
-        <div className='bottom-sect'>
-          {csvs && csvs.map((csv, i) => <div key={i}>{
-            csv.title
-          }</div>)}
-        </div>
+        {rawFiles && rawFiles.length > 0 && <div className='bottom-sect'>
+          <div id='files-title'>Title</div>
+          {rawFiles && Array.from(rawFiles).map((csv, i) => {
+            return <div className='files-list' key={i}>
+              <span>{csv.name}</span>
+              <div className='buttons-container'>
+                <button
+                  onClick={() => {
+                    updateRawFile(rawFiles[i]);
+                    updateShowModal(true);
+                  }}
+                >Show</button>
+                <button
+                  onClick={() => {
+                    const newRawFiles = rawFiles.splice(i, 1);
+                    updateRawFile(newRawFiles);
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>;
+          }
+          )}
+        </div>}
       </div>
     </>
   );

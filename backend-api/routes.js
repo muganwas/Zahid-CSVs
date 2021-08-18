@@ -1,7 +1,9 @@
 'use strict';
 module.exports = app => {
-    const db = require('./controllers');
-    app.route('/api/v1/info')
-        .post(db.save)
-        .get(db.retrieve);
-}
+    const info = require('./controllers');
+    app.route('/api/v1/saveCSV')
+        .post(info.save)
+        .get(info.retrieve);
+    app.route('/api/v1/create-table')
+        .post(info.createTable);
+};
