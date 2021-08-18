@@ -55,8 +55,6 @@ async function createTable(info) {
   return { message, result };
 }
 
-asy;
-
 module.exports = {
   retrieveData,
   saveCSV,
