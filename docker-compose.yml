@@ -18,7 +18,7 @@ services:
     ports: ['3000:3000']
     volumes:
       - /frontend/node_modules
-      - ./frontend/src:/frontend_app/src
+      - ./frontend/src:/app/src
     networks:
       - front-tier
       - back-tier

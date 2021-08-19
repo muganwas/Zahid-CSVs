@@ -48,10 +48,10 @@ export default function Home() {
     updateRawFile(null);
   };
 
-  // const toTimestamp = (date) => {
-  //   const dt = Date.parse(date);
-  //   return dt / 1000;
-  // };
+  const toTimestamp = async (date) => {
+    const dt = Date.parse(date);
+    return dt / 1000;
+  };
 
   const _onDone = async (name, rows) => {
     updateLoading(true);
@@ -65,7 +65,17 @@ export default function Home() {
     const rowValObjectArr = [];
 
     await titleArr.forEach(e => trimRows.push(((e.replace(/['"]+/g, '')).trim()).replace(/\s/g, '_'))); //remove whitespace, queotes then replace spaces with a "_"
-    await trimRows.forEach(e => rowObjectArr.push({ name: e, type: 'string' }));
+    await trimRows.forEach(async (e, i) => {
+      const current = valRows[0][i];
+      const currentLabel = e.toLowerCase();
+      const petentialTS = currentLabel.includes('date') || currentLabel.includes('time'); // keywords for potential timestamps, could be removed entirely but would affect performance
+      let timestamp = false;
+      if (petentialTS) {
+        const ts = await toTimestamp(current);
+        timestamp = ts > 0;
+      }
+      rowObjectArr.push({ name: e, type: timestamp ? 'timestamp' : 'string' });
+    });
     await valRows.map(async r => {
       const currentRow = [];
       await r.map((v, i) => currentRow.push({ name: rowObjectArr[i].name, value: (v.replace(/['"]+/g, '')).trim() }));
